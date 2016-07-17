@@ -4,6 +4,7 @@ import subprocess
 
 batt = {}
 total_energy = 0.0
+total_time = 0.0
 
 for battery in range(2):
     print("")
@@ -17,7 +18,7 @@ for battery in range(2):
 
     for line in result:
         if 'state:' in line:
-            batt['state'] = line.split()[1]
+            batt['status   '] = line.split()[1]
         if 'time to empty:' in line:
             batt['time_left'] = line.split()[3] + ' ' + line.split()[4]
         if 'percentage:' in line:
@@ -27,13 +28,17 @@ for battery in range(2):
             total_energy = total_energy + batt_energy
         if 'energy-rate:' in line:
             energy_rate = line.split()[1]
+            batt['power rate'] = energy_rate + ' w'
 
     for k,v in batt.items():
         print(k +  "      " + v)
 
 print("")
 print("TOTAL ENERGY: " + str(total_energy) + ' wh')
-total_time = total_energy / float(energy_rate)
+if total_time > 0:
+    total_time = total_energy / float(energy_rate)
+else:
+    total_time = total_energy / 7.0
 total_time = ("%.2f" % total_time)
 print("TOTAL TIME:   " + str(total_time) + ' hours')
 print("")
