@@ -5,16 +5,17 @@ import subprocess
 batt = {}
 total_energy = 0.0
 total_time = 0.0
+cmd = "upower -i /org/freedesktop/UPower/devices/battery_BAT"
 
-for battery in range(2):
+for b in range(2):
     print("")
-    print("Battery " + str(battery))
+    print("Battery " + str(b))
     print("=======================")
     try:
-        process = subprocess.Popen("upower -i /org/freedesktop/UPower/devices/battery_BAT"+str(battery), shell=True, stdout=subprocess.PIPE)
-        result = process.communicate()[0].split('\n')
+        p = subprocess.Popen(cmd + str(b), shell=True, stdout=subprocess.PIPE)
+        result = p.communicate()[0].split('\n')
     except:
-        print("error getting BAT" + str(battery))
+        print("error getting BAT" + str(b))
 
     for line in result:
         if 'state:' in line:
@@ -26,12 +27,13 @@ for battery in range(2):
         if 'energy:' in line:
             batt_energy = float(line.split()[1])
             total_energy = total_energy + batt_energy
+            batt['energy'] = '   ' + str(batt_energy) + 'wh'
         if 'energy-rate:' in line:
             energy_rate = line.split()[1]
             batt['power rate'] = energy_rate + ' w'
 
-    for k,v in batt.items():
-        print(k +  "      " + v)
+    for k, v in batt.items():
+        print(k + "      " + v)
 
 print("")
 print("TOTAL ENERGY: " + str(total_energy) + ' wh')
